@@ -1,6 +1,6 @@
 package main
 
-type ChipV8 struct{
+type Chip8 struct{
     memory [4096]byte
     programCounter [2]byte
     indexRegister [2]byte
@@ -10,8 +10,8 @@ type ChipV8 struct{
     delayTimer byte
 }
 
-var chipV8 ChipV8
+var chip8 Chip8
 
-func initChipV8() {
+func initChip8() {
     
 }

@@ -1,4 +1,4 @@
-module github.com/gbcosta/v8_engine-emulator
+module github.com/gbcosta/chip8-emulator
 
 go 1.22.3
 
