@@ -1,8 +1,13 @@
 package main
 
 import (
+	"image/color"
 	"os"
+
+	"github.com/hajimehoshi/ebiten/v2"
 )
+
+const INSTRUCIONS_PER_TICK = 12
 
 func checkError(e error){
     if(e != nil){
@@ -65,6 +70,8 @@ func initChip8() {
     for i, font := range fonts{
         chip8.memory[i] = font
     }
+
+    img = ebiten.NewImage(64, 32)
 }
 
 func loadROM(){    
@@ -77,12 +84,16 @@ func loadROM(){
         chip8.memory[chip8.programCounter + uint16(nextMemoryAdress)] = value 
         nextMemoryAdress += 1
     }
-
-    fetch()
-    decode()
 }
 
 func chip8Cycle(){
+    if(ebiten.ActualTPS() > 0){
+        ticksDeviation := 60 / int(ebiten.ActualTPS())
+        for i := 0; i < ticksDeviation * INSTRUCIONS_PER_TICK; i++{
+            fetch()
+            decode()
+        }
+    }
 }
 
 func fetch(){
@@ -94,37 +105,82 @@ func fetch(){
     maskFirstPart := byte(0b11110000)
     maskSecondPart := byte(0b00001111)
 
+
     opcode.nibbles[0] = firstOpcodePart & maskFirstPart >> 4
-    opcode.nibbles[1] = firstOpcodePart & maskSecondPart >> 4
+    opcode.nibbles[1] = firstOpcodePart & maskSecondPart 
     opcode.nibbles[2] = secondOpcodePart & maskFirstPart >> 4
-    opcode.nibbles[3] = secondOpcodePart & maskSecondPart >> 4
+    opcode.nibbles[3] = secondOpcodePart & maskSecondPart 
+
+    chip8.programCounter += 2
 }
 
 func decode(){
-    switch opcode.instruction {
-    case 0xe0:
+    switch opcode.nibbles[0] {
+    case 0:
         clearScreen()
-    }
+    case 1: 
+        jump()
+    case 6:
+        setRegister()
+    case 7:
+        addValueToResgister()
+    case 0xA:
+        setIndexRegister()
+    case 0xD:
+        draw()
+}
 }
 
 func execute(){
-
+    
 }
 func clearScreen(){
-    print("Clear Screen called")
+    img.Clear()
+    img = ebiten.NewImage(64, 32)
 }
 
 func jump(){
+    chip8.programCounter = uint16(opcode.nibbles[1]) << 8 | 
+    uint16(opcode.nibbles[2]) << 4 | uint16(opcode.nibbles[3])
 }
 
 func setRegister(){
+    chip8.registers[uint8(opcode.nibbles[1])] = opcode.nibbles[2] << 4 | opcode.nibbles[3]
 }
 
 func addValueToResgister(){
+    vx := opcode.nibbles[1]
+    chip8.registers[int(vx)] += opcode.nibbles[2] << 4 | opcode.nibbles[3]
 }
 
-func setIndexRegiste(){
+func setIndexRegister(){
+    chip8.indexRegister = uint16(opcode.nibbles[1]) << 8 | 
+    uint16(opcode.nibbles[2]) << 4 | uint16(opcode.nibbles[3])
 }
 
 func draw(){
+    vx := chip8.registers[uint8(opcode.nibbles[1])] & 63
+    vy := chip8.registers[uint8(opcode.nibbles[2])] & 31
+    nSprites := int(opcode.nibbles[3])
+
+    chip8.registers[0xf] = 0
+
+    red := color.RGBA{255, 0, 0, 255}
+
+    for i := 0; i < nSprites; i++{
+        if int(vy) + i > 31{
+            break
+        }
+
+        mask := byte(128)
+        for j:= 0; j < 8; j++{
+            maskApplied := chip8.memory[int(chip8.indexRegister) + i] & mask
+            if (maskApplied / mask == 1 && int(vx) + j < 64){
+                img.Set(int(vx) + j, int(vy) + i, red)
+            }
+            mask /= 2
+        }
+    }
+    chip8.draw = true
 }
+
