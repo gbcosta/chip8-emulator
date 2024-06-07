@@ -166,7 +166,7 @@ func draw(){
     chip8.registers[0xf] = 0
 
     red := color.RGBA{255, 0, 0, 255}
-
+    
     for i := 0; i < nSprites; i++{
         if int(vy) + i > 31{
             break
