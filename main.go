@@ -15,6 +15,7 @@ func (g *Game) Update() error {
     if !g.inited {
         g.init()
     }
+    //fmt.Printf("TPS: %d \nFPS: %d\nVsync: %v \n", int(ebiten.ActualTPS()), int(ebiten.ActualFPS()), ebiten.IsVsyncEnabled())
     return nil
 }
 
@@ -42,7 +43,7 @@ func (g *Game) init(){
 
 func main() {
 
-    ebiten.SetWindowSize(960, 720)
+    ebiten.SetWindowSize(768, 576)
     ebiten.SetWindowTitle("Chip8 Emulator")
     ebiten.SetScreenClearedEveryFrame(false)
     

@@ -7,7 +7,7 @@
 *.dll
 *.so
 *.dylib
-
+swap-pane
 # Test binary, built with `go test -c`
 *.test
 
