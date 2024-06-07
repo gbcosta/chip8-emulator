@@ -87,7 +87,7 @@ func loadROM(){
 }
 
 func chip8Cycle(){
-    if(ebiten.ActualTPS() > 0){
+    if(ebiten.ActualTPS() >= 1){
         ticksDeviation := 60 / int(ebiten.ActualTPS())
         for i := 0; i < ticksDeviation * INSTRUCIONS_PER_TICK; i++{
             fetch()
@@ -175,7 +175,7 @@ func draw(){
         mask := byte(128)
         for j:= 0; j < 8; j++{
             maskApplied := chip8.memory[int(chip8.indexRegister) + i] & mask
-            if (maskApplied / mask == 1 && int(vx) + j < 64){
+            if (maskApplied == mask && int(vx) + j < 64){
                 img.Set(int(vx) + j, int(vy) + i, red)
             }
             mask /= 2
