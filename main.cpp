@@ -4,6 +4,8 @@
 #include <cstdlib>
 #include <iostream>
 
+#include "./src/chip8.cpp"
+
 struct WindowViewPort {
   int x = 0;
   int y = 0;
@@ -48,6 +50,9 @@ int main() {
   glViewport(0, 0, 800, 600);
 
   glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
+
+  Chip8 chip8;
+  chip8.loadRom();
 
   while (!glfwWindowShouldClose(window)) {
     processInput(window);
