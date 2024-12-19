@@ -1,30 +1,31 @@
 #ifndef CHIP8_H
+#include <cstdint>
 #define CHIP8_H
 
-#include <cstdint>
-
-struct OpCode {
-  int8_t byte[4];
-  int16_t instruction;
+struct Opcode {
+  uint8_t byte[4];
+  uint16_t instruction;
 };
 
 class Chip8 {
 private:
-  int8_t memory[4096];
-  int16_t programCounter;
-  int16_t indexRegister;
-  int16_t stackPointer;
-  int8_t registers[16];
-  int8_t stack[16];
-  int8_t soundTimer;
-  int8_t delayTimer;
+  uint8_t memory[4096];
+  uint16_t PC;
+  uint16_t indexRegister;
+  uint16_t stackPointer;
+  uint8_t registers[16];
+  uint16_t stack[16];
+  uint8_t soundTimer;
+  uint8_t delayTimer;
   bool draw;
+  Opcode opcode;
 
 public:
   Chip8();
   int loadRom();
   void fetch();
   void decode();
+  void execute();
   void resetChip8();
 };
 

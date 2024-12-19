@@ -1,3 +1,4 @@
+#include <bitset>
 #include <cstdint>
 #include <fstream>
 #include <ios>
@@ -7,10 +8,10 @@
 
 #include "./chip8.h"
 
-Chip8::Chip8() {}
+Chip8::Chip8() { resetChip8(); }
 
 void Chip8::resetChip8() {
-  this->programCounter = 0x200;
+  this->PC = 512;
   this->stackPointer = 0;
   this->indexRegister = 0;
   this->soundTimer = 0;
@@ -21,6 +22,7 @@ void Chip8::resetChip8() {
     this->registers[i] = 0;
     this->stack[i] = 0;
   }
+
   int16_t fonts[80] = {
       0xF0, 0x90, 0x90, 0x90, 0xF0, 0x20, 0x60, 0x20, 0x20, 0x70, 0xF0, 0x10,
       0xF0, 0x80, 0xF0, 0xF0, 0x10, 0xF0, 0x10, 0xF0, 0x90, 0x90, 0xF0, 0x10,
@@ -42,8 +44,22 @@ int Chip8::loadRom() {
     std::cout << "Not possible open the rom" << std::endl;
     return 1;
   }
-  std::vector<char> rom((std::istreambuf_iterator<char>(romFile)),
-                        (std::istreambuf_iterator<char>()));
 
+  std::vector<uint8_t> rom((std::istreambuf_iterator<char>(romFile)),
+                           (std::istreambuf_iterator<char>()));
+
+  for (int i = 0; i < rom.size(); i++) {
+
+    this->memory[i + 512] = rom[i];
+    std::cout << "opcode: " << int(this->memory[i + 512]) << std::endl;
+  }
+
+  fetch();
   return 0;
+}
+
+void Chip8::fetch() {
+  this->opcode.instruction =
+      (this->memory[this->PC] << 8) | this->memory[this->PC + 1];
+  this->PC += 2;
 }
