@@ -1,5 +1,3 @@
-#include <bitset>
-#include <cstdint>
 #include <fstream>
 #include <ios>
 #include <iostream>
@@ -8,10 +6,13 @@
 
 #include "./chip8.h"
 
-Chip8::Chip8() { resetChip8(); }
+Chip8::Chip8() {
+  resetChip8();
+  opengl = new Opengl();
+}
 
 void Chip8::resetChip8() {
-  this->PC = 512;
+  this->PC = 0x200;
   this->stackPointer = 0;
   this->indexRegister = 0;
   this->soundTimer = 0;
@@ -40,8 +41,9 @@ void Chip8::resetChip8() {
 
 int Chip8::loadRom() {
   std::ifstream romFile("./roms/IBMLogo.ch8", std::ios::binary);
+
   if (!romFile.is_open()) {
-    std::cout << "Not possible open the rom" << std::endl;
+    std::cerr << "Not possible open the rom" << std::endl;
     return 1;
   }
 
@@ -49,17 +51,53 @@ int Chip8::loadRom() {
                            (std::istreambuf_iterator<char>()));
 
   for (int i = 0; i < rom.size(); i++) {
-
-    this->memory[i + 512] = rom[i];
-    std::cout << "opcode: " << int(this->memory[i + 512]) << std::endl;
+    this->memory[i + 0x200] = rom[i];
   }
 
-  fetch();
+  for (int i = 0; i < 5; i++) {
+    fetch();
+    decode();
+  }
+
   return 0;
 }
 
 void Chip8::fetch() {
-  this->opcode.instruction =
-      (this->memory[this->PC] << 8) | this->memory[this->PC + 1];
+  uint8_t opcodePartOne = this->memory[this->PC];
+  uint8_t opcodePartTwo = this->memory[this->PC + 1];
+
+  this->opcode.instruction = (opcodePartOne << 8) | opcodePartTwo;
+
+  this->opcode.nibbles[0] = (opcodePartOne & 0b11110000) >> 4;
+  this->opcode.nibbles[1] = opcodePartOne & 0b00001111;
+  this->opcode.nibbles[2] = (opcodePartOne & 0b11110000) >> 4;
+  this->opcode.nibbles[3] = opcodePartOne & 0b00001111;
+
   this->PC += 2;
+}
+
+void Chip8::run() {
+  while (!glfwWindowShouldClose(opengl->getWindow())) {
+    opengl->run();
+  }
+}
+
+void Chip8::decode() {
+
+  switch (this->opcode.nibbles[0]) {
+  case 0:
+    std::cout << "clear" << std::endl;
+    break;
+  case 0xd:
+    std::cout << "draw" << std::endl;
+  case 0xa:
+    std::cout << "set register i" << std::endl;
+    break;
+  case 0x6:
+    std::cout << "set register 6" << std::endl;
+    break;
+  case 0x7:
+    std::cout << "set register 7" << std::endl;
+    break;
+  }
 }

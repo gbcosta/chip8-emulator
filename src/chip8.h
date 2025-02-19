@@ -1,9 +1,11 @@
 #ifndef CHIP8_H
-#include <cstdint>
 #define CHIP8_H
 
+#include "opengl.h"
+#include <cstdint>
+
 struct Opcode {
-  uint8_t byte[4];
+  uint8_t nibbles[4];
   uint16_t instruction;
 };
 
@@ -19,6 +21,7 @@ private:
   uint8_t delayTimer;
   bool draw;
   Opcode opcode;
+  Opengl *opengl;
 
 public:
   Chip8();
@@ -27,6 +30,7 @@ public:
   void decode();
   void execute();
   void resetChip8();
+  void run();
 };
 
 #endif
