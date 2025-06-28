@@ -1,3 +1,5 @@
+#include <glad.h>
+
 #include "opengl.h"
 #include <GLFW/glfw3.h>
 

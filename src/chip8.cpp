@@ -1,10 +1,10 @@
+#include "./chip8.h"
+
 #include <fstream>
 #include <ios>
 #include <iostream>
 #include <iterator>
 #include <vector>
-
-#include "./chip8.h"
 
 Chip8::Chip8() {
   resetChip8();
