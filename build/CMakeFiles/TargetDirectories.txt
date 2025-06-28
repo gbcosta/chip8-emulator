@@ -1,4 +1,0 @@
-/home/gabriel/projects/chip8-emulator/build/CMakeFiles/glad_lib.dir
-/home/gabriel/projects/chip8-emulator/build/CMakeFiles/build.dir
-/home/gabriel/projects/chip8-emulator/build/CMakeFiles/edit_cache.dir
-/home/gabriel/projects/chip8-emulator/build/CMakeFiles/rebuild_cache.dir
