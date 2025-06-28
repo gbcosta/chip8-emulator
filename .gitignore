@@ -1,1 +1,26 @@
+# Ignorar pastas de builds e executáveis
 build/
+bin/
+*.exe
+*.o
+
+# Ignorar pastas de dependências de projetos JS/TS
+node_modules/
+dist/
+
+# Ignorar arquivos de variáveis de ambiente
+.env
+.env.*
+
+# Ignorar arquivos de log
+*.log
+
+# Ignorar arquivos temporários de editores
+*~
+*.swp
+
+# Ignorar arquivos específicos do macOS
+.DS_Store
+
+# Ignorar arquivos específicos do Windows
+Thumbs.db
